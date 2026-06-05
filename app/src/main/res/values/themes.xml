@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Kino" parent="android:Theme.Material.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@color/kino_black</item>
+        <item name="android:statusBarColor">@color/kino_black</item>
+        <item name="android:navigationBarColor">@color/kino_black</item>
+    </style>
+</resources>
