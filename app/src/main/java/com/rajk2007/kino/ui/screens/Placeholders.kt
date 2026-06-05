@@ -12,8 +12,6 @@ import androidx.navigation.NavController
 }
 
 @Composable
-fun SearchScreen(navController: NavController) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Search Screen") }
 }
 
 @Composable
