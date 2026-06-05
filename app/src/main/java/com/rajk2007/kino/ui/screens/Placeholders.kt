@@ -25,8 +25,6 @@ fun ProfileScreen(navController: NavController) {
 }
 
 @Composable
-fun DetailsScreen(navController: NavController, type: String, id: Int) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Details Screen: $type $id") }
 }
 
 @Composable
