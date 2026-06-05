@@ -28,6 +28,4 @@ fun ProfileScreen(navController: NavController) {
 }
 
 @Composable
-fun PlayerScreen(navController: NavController, type: String, id: Int) {
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { Text("Player Screen: $type $id") }
 }
