@@ -32,7 +32,7 @@ fun LibraryScreenContent(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(KinoColors.Background)
+            .background(KinoColors.Black)
             .padding(bottom = 80.dp)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
@@ -52,7 +52,7 @@ fun LibraryScreenContent(navController: NavController) {
         ScrollableTabRow(
             selectedTabIndex = selectedTab,
             containerColor = Color.Transparent,
-            contentColor = KinoColors.Primary,
+            contentColor = KinoColors.Red,
             edgePadding = 20.dp,
             divider = {}
         ) {
@@ -63,7 +63,7 @@ fun LibraryScreenContent(navController: NavController) {
                     text = {
                         Text(
                             text = title,
-                            color = if (selectedTab == index) KinoColors.Primary else Color.Gray,
+                            color = if (selectedTab == index) KinoColors.Red else Color.Gray,
                             fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
                         )
                     }
@@ -118,7 +118,7 @@ fun LibraryItem() {
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "Play Offline",
-                color = KinoColors.Primary,
+                color = KinoColors.Red,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Medium
             )

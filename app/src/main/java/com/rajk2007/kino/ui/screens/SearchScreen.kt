@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import com.rajk2007.kino.ui.theme.KinoColors
 
 @Composable
@@ -26,6 +27,7 @@ fun SearchScreen(navController: NavController) {
     SearchScreenContent(navController)
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SearchScreenContent(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
@@ -34,7 +36,7 @@ fun SearchScreenContent(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(KinoColors.Background)
+            .background(KinoColors.Black)
             .padding(20.dp)
             .padding(bottom = 60.dp)
     ) {
@@ -54,11 +56,11 @@ fun SearchScreenContent(navController: NavController) {
             placeholder = { Text("Movies, TV Shows, Actors...", color = Color.Gray) },
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = KinoColors.Primary,
+                focusedBorderColor = KinoColors.Red,
                 unfocusedBorderColor = KinoColors.Surface,
                 focusedContainerColor = KinoColors.Surface,
                 unfocusedContainerColor = KinoColors.Surface,
-                cursorColor = KinoColors.Primary
+                cursorColor = KinoColors.Red
             ),
             shape = RoundedCornerShape(16.dp),
             singleLine = true

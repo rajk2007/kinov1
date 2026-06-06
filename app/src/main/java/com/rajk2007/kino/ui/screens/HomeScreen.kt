@@ -47,7 +47,7 @@ fun HomeScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(KinoColors.Background)
+            .background(KinoColors.Black)
             .verticalScroll(scrollState)
             .padding(bottom = 80.dp)
     ) {
@@ -94,7 +94,7 @@ fun HomeScreenContent(
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
                         .clickable { onCategorySelected(category) },
-                    color = if (selectedCategory == category) KinoColors.Primary else KinoColors.Surface,
+                    color = if (selectedCategory == category) KinoColors.Red else KinoColors.Surface,
                     shape = RoundedCornerShape(20.dp)
                 ) {
                     Text(
@@ -167,7 +167,7 @@ fun HeroSection() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Button(
                     onClick = { /* TODO */ },
-                    colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Primary),
+                    colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Red),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Icon(Icons.Default.PlayArrow, contentDescription = null)
@@ -233,7 +233,7 @@ fun ContinueWatchingSection() {
                             modifier = Modifier
                                 .fillMaxWidth(0.6f)
                                 .fillMaxHeight()
-                                .background(KinoColors.Primary)
+                                .background(KinoColors.Red)
                         )
                     }
                 }
@@ -260,7 +260,7 @@ fun ContentRow(title: String, navController: NavController) {
             )
             Text(
                 text = "See All",
-                color = KinoColors.Primary,
+                color = KinoColors.Red,
                 fontSize = 14.sp
             )
         }

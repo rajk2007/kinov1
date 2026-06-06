@@ -34,7 +34,7 @@ fun ProfileScreenContent(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(KinoColors.Background)
+            .background(KinoColors.Black)
             .verticalScroll(scrollState)
             .padding(bottom = 100.dp)
     ) {
@@ -49,7 +49,7 @@ fun ProfileScreenContent(navController: NavController) {
                     .fillMaxSize()
                     .background(
                         Brush.verticalGradient(
-                            colors = listOf(KinoColors.Primary, KinoColors.Background)
+                            colors = listOf(KinoColors.Red, KinoColors.Black)
                         )
                     )
             )
@@ -88,7 +88,7 @@ fun ProfileScreenContent(navController: NavController) {
                 ) {
                     Text(
                         text = "Premium Member",
-                        color = KinoColors.Primary,
+                        color = KinoColors.Red,
                         modifier = Modifier.padding(horizontal = 15.dp, vertical = 5.dp),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold
@@ -110,7 +110,7 @@ fun ProfileScreenContent(navController: NavController) {
                 modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(15.dp)
             ) {
-                ThemeTile("Midnight", KinoColors.Background, true)
+                ThemeTile("Midnight", KinoColors.Black, true)
                 ThemeTile("Ocean", Color(0xFF0D1B2A), false)
                 ThemeTile("Forest", Color(0xFF1B2E1B), false)
             }
@@ -169,7 +169,7 @@ fun ProfileSettingRow(icon: ImageVector, title: String, value: String) {
             Spacer(modifier = Modifier.width(15.dp))
             Text(text = title, color = Color.White, fontSize = 16.sp)
         }
-        Text(text = value, color = KinoColors.Primary, fontSize = 14.sp)
+        Text(text = value, color = KinoColors.Red, fontSize = 14.sp)
     }
 }
 

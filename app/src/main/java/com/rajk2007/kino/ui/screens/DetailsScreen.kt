@@ -35,7 +35,7 @@ fun DetailsScreen(navController: NavController, type: String, id: Int) {
 fun DetailsScreenContent(navController: NavController, type: String, id: Int) {
     val scrollState = rememberScrollState()
     
-    Box(modifier = Modifier.fillMaxSize().background(KinoColors.Background)) {
+    Box(modifier = Modifier.fillMaxSize().background(KinoColors.Black)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -55,7 +55,7 @@ fun DetailsScreenContent(navController: NavController, type: String, id: Int) {
                         .fillMaxSize()
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(Color.Transparent, KinoColors.Background),
+                                colors = listOf(Color.Transparent, KinoColors.Black),
                                 startY = 300f
                             )
                         )
@@ -88,7 +88,7 @@ fun DetailsScreenContent(navController: NavController, type: String, id: Int) {
                     Button(
                         onClick = { /* TODO */ },
                         modifier = Modifier.weight(1f).height(56.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Primary),
+                        colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Red),
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         Icon(Icons.Default.PlayArrow, contentDescription = null)
