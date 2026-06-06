@@ -2,7 +2,7 @@ package com.rajk2007.kino.cloudstream
 
 import com.lagradost.cloudstream3.*
 
-// Type aliases for easier use in your code
+// Official library aliases
 typealias KinoMainAPI = MainAPI
 typealias KinoExtractorLink = ExtractorLink
 typealias KinoSubtitleFile = SubtitleFile
@@ -13,4 +13,9 @@ typealias KinoTvSeriesLoadResponse = TvSeriesLoadResponse
 typealias KinoTvType = TvType
 typealias KinoEpisode = Episode
 
-// Keep any custom wrappers if needed, but prefer library classes
+object CloudStreamUtils {
+    fun isHindi(link: ExtractorLink): Boolean {
+        return link.name.contains("Hindi", ignoreCase = true) ||
+               link.name.contains("Dub", ignoreCase = true)
+    }
+}
