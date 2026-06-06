@@ -110,7 +110,7 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Player.route) { backStackEntry ->
                             val type = backStackEntry.arguments?.getString("type") ?: "movie"
                             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
-                            PlayerScreen(navController, type, id)
+                            PlayerScreen(navController, type, id.toString())
                         }
                     }
                 }
