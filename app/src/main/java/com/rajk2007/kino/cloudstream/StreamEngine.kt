@@ -11,10 +11,11 @@ class StreamEngine {
         providers: List<MainAPI>,
         title: String,
         tmdbId: Int = 0,
-        type: String = "movie"
+        type: String = "movie",
+        season: Int? = null,
+        episode: Int? = null
     ): List<ExtractorLink> = withContext(Dispatchers.IO) {
         val allLinks = mutableListOf<ExtractorLink>()
-
         providers.forEach { provider ->
             try {
                 val searchResults = provider.search(title)
@@ -25,7 +26,13 @@ class StreamEngine {
 
                 val data = when (loadResponse) {
                     is MovieLoadResponse -> loadResponse.dataUrl
-                    is TvSeriesLoadResponse -> loadResponse.episodes.firstOrNull()?.data ?: first.url
+                    is TvSeriesLoadResponse -> {
+                        if (season != null && episode != null) {
+                            loadResponse.episodes.find { it.season == season && it.episode == episode }?.data ?: loadResponse.episodes.firstOrNull()?.data
+                        } else {
+                            loadResponse.episodes.firstOrNull()?.data
+                        } ?: first.url
+                    }
                     else -> first.url
                 }
 
