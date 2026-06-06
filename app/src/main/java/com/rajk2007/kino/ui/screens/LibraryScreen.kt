@@ -3,9 +3,9 @@ package com.rajk2007.kino.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,52 +21,40 @@ import com.rajk2007.kino.ui.theme.KinoColors
 
 @Composable
 fun LibraryScreen(navController: NavController) {
-    try {
-        LibraryScreenContent(navController)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Error in library", color = Color.White)
-        }
-    }
+    LibraryScreenContent(navController)
 }
 
 @Composable
 fun LibraryScreenContent(navController: NavController) {
     var selectedTab by remember { mutableIntStateOf(0) }
-    val tabs = listOf("Downloads", "Continue", "Watchlist", "Favorites", "History", "Completed")
+    val tabs = listOf("Watchlist", "Favorites", "Downloaded", "History", "Purchased", "Lists")
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(KinoColors.Black)
+            .background(KinoColors.Background)
+            .padding(bottom = 80.dp)
     ) {
-        Text(
-            text = "Library",
-            color = Color.White,
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(16.dp)
-        )
-        Text(
-            text = "Your personal cinema",
-            color = KinoColors.Muted,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-        )
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(
+                text = "My Library",
+                color = Color.White,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Everything you've saved and watched",
+                color = Color.Gray,
+                fontSize = 14.sp
+            )
+        }
 
         ScrollableTabRow(
             selectedTabIndex = selectedTab,
             containerColor = Color.Transparent,
-            contentColor = KinoColors.Red,
-            edgePadding = 16.dp,
-            divider = {},
-            indicator = { tabPositions ->
-                TabRowDefaults.SecondaryIndicator(
-                    modifier = Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                    color = KinoColors.Red
-                )
-            }
+            contentColor = KinoColors.Primary,
+            edgePadding = 20.dp,
+            divider = {}
         ) {
             tabs.forEachIndexed { index, title ->
                 Tab(
@@ -75,7 +63,8 @@ fun LibraryScreenContent(navController: NavController) {
                     text = {
                         Text(
                             text = title,
-                            color = if (selectedTab == index) KinoColors.Red else KinoColors.Muted
+                            color = if (selectedTab == index) KinoColors.Primary else Color.Gray,
+                            fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal
                         )
                     }
                 )
@@ -84,10 +73,10 @@ fun LibraryScreenContent(navController: NavController) {
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            contentPadding = PaddingValues(20.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            items(5) {
+            items(10) {
                 LibraryItem()
             }
         }
@@ -99,36 +88,40 @@ fun LibraryItem() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(KinoColors.Elevated),
+            .height(100.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = "https://image.tmdb.org/t/p/w185/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+            model = "https://image.tmdb.org/t/p/w500/8Gxv0mYmUpepXUhwlm8YvE4Sxv1.jpg",
             contentDescription = null,
             modifier = Modifier
                 .width(150.dp)
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(12.dp)),
             contentScale = ContentScale.Crop
         )
-        Column(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(text = "Oppenheimer", color = Color.White, fontWeight = FontWeight.Bold)
-            Text(text = "1080p • 2.3 GB", color = KinoColors.Muted, fontSize = 12.sp)
-            Spacer(Modifier.weight(1f))
-            Button(
-                onClick = { },
-                modifier = Modifier.height(32.dp),
-                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Red)
-            ) {
-                Text("Play Offline", fontSize = 10.sp)
-            }
+        
+        Spacer(modifier = Modifier.width(15.dp))
+        
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = "The Dark Knight",
+                color = Color.White,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "Action, Crime, Drama",
+                color = Color.Gray,
+                fontSize = 12.sp
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "Play Offline",
+                color = KinoColors.Primary,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

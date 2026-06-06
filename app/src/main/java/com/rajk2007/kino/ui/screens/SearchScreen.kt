@@ -1,15 +1,19 @@
 package com.rajk2007.kino.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,110 +23,127 @@ import com.rajk2007.kino.ui.theme.KinoColors
 
 @Composable
 fun SearchScreen(navController: NavController) {
-    try {
-        SearchScreenContent(navController)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Error in search", color = Color.White)
-        }
-    }
+    SearchScreenContent(navController)
 }
 
 @Composable
 fun SearchScreenContent(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
     val trendingSearches = listOf("Jawan", "One Piece", "Oppenheimer", "Attack on Titan", "RRR", "The Boys")
-    val categories = listOf("Action", "Romance", "Anime", "Thriller", "Comedy", "Sci-Fi")
-
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(KinoColors.Black)
-            .padding(16.dp)
+            .background(KinoColors.Background)
+            .padding(20.dp)
+            .padding(bottom = 60.dp)
     ) {
+        Text(
+            text = "Search",
+            color = Color.White,
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold
+        )
+        
+        Spacer(modifier = Modifier.height(20.dp))
+        
         OutlinedTextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            placeholder = { Text("Movies, shows, anime...", color = KinoColors.Muted) },
-            shape = RoundedCornerShape(12.dp),
+            modifier = Modifier.fillMaxWidth(),
+            placeholder = { Text("Movies, TV Shows, Actors...", color = Color.Gray) },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = KinoColors.Elevated,
-                unfocusedContainerColor = KinoColors.Elevated,
-                focusedBorderColor = KinoColors.Red,
-                unfocusedBorderColor = Color.Transparent,
-                cursorColor = KinoColors.Red,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White
+                focusedBorderColor = KinoColors.Primary,
+                unfocusedBorderColor = KinoColors.Surface,
+                focusedContainerColor = KinoColors.Surface,
+                unfocusedContainerColor = KinoColors.Surface,
+                cursorColor = KinoColors.Primary
             ),
+            shape = RoundedCornerShape(16.dp),
             singleLine = true
         )
-
+        
+        Spacer(modifier = Modifier.height(30.dp))
+        
         Text(
             text = "Trending Searches",
             color = Color.White,
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 12.dp)
+            fontWeight = FontWeight.Bold
         )
-
+        
+        Spacer(modifier = Modifier.height(15.dp))
+        
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             trendingSearches.forEach { search ->
                 Surface(
-                    onClick = { searchQuery = search },
-                    color = KinoColors.Elevated,
-                    shape = RoundedCornerShape(20.dp)
+                    color = KinoColors.Surface,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.clickable { searchQuery = search }
                 ) {
                     Text(
                         text = search,
-                        color = Color.White,
+                        color = Color.LightGray,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         fontSize = 14.sp
                     )
                 }
             }
         }
-
+        
+        Spacer(modifier = Modifier.height(30.dp))
+        
         Text(
-            text = "Browse Categories",
+            text = "Categories",
             color = Color.White,
             fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
+            fontWeight = FontWeight.Bold
         )
-
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+        
+        Spacer(modifier = Modifier.height(15.dp))
+        
+        val categories = listOf(
+            "Action" to Color(0xFFFF5252),
+            "Comedy" to Color(0xFFFFD740),
+            "Drama" to Color(0xFF448AFF),
+            "Horror" to Color(0xFF7C4DFF),
+            "Sci-Fi" to Color(0xFF64FFDA),
+            "Anime" to Color(0xFFFF4081)
+        )
+        
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(15.dp),
+            verticalArrangement = Arrangement.spacedBy(15.dp),
+            modifier = Modifier.fillMaxSize()
         ) {
-            val chunkedCategories = categories.chunked(2)
-            items(chunkedCategories) { row ->
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    row.forEach { category ->
-                        Surface(
-                            modifier = Modifier.weight(1f).height(60.dp),
-                            color = KinoColors.Elevated,
-                            shape = RoundedCornerShape(12.dp),
-                            onClick = { }
-                        ) {
-                            Box(contentAlignment = Alignment.Center) {
-                                Text(text = category, color = Color.White, fontWeight = FontWeight.SemiBold)
-                            }
-                        }
-                    }
+            items(categories) { (name, color) ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(90.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(color.copy(alpha = 0.2f))
+                        .clickable { /* TODO */ },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = name,
+                        color = color,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FlowRow(
     modifier: Modifier = Modifier,

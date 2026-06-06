@@ -1,14 +1,17 @@
 package com.rajk2007.kino.ui.screens
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,172 +28,148 @@ import com.rajk2007.kino.ui.theme.KinoColors
 
 @Composable
 fun DetailsScreen(navController: NavController, type: String, id: Int) {
-    try {
-        DetailsScreenContent(navController, type, id)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Error loading details", color = Color.White)
-        }
-    }
+    DetailsScreenContent(navController, type, id)
 }
 
 @Composable
 fun DetailsScreenContent(navController: NavController, type: String, id: Int) {
     val scrollState = rememberScrollState()
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(KinoColors.Black)
-    ) {
+    
+    Box(modifier = Modifier.fillMaxSize().background(KinoColors.Background)) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
         ) {
-            // Backdrop with Gradient
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(280.dp)
-            ) {
+            // Backdrop Image
+            Box(modifier = Modifier.fillMaxWidth().height(450.dp)) {
                 AsyncImage(
-                    model = "https://image.tmdb.org/t/p/w1280/rvMmQj3nMZbJmoW6QrzU0nq9Xky.jpg",
+                    model = "https://image.tmdb.org/t/p/original/r2J0VvYm0sX7h7uR3v9Z8v4X5V0.jpg",
                     contentDescription = null,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
+                
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(Color.Transparent, KinoColors.Black),
-                                startY = 100f
+                                colors = listOf(Color.Transparent, KinoColors.Background),
+                                startY = 300f
                             )
                         )
                 )
             }
-
-            // Info Section
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .offset(y = (-60).dp),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                AsyncImage(
-                    model = "https://image.tmdb.org/t/p/w342/rhGx6E3qRNMgj3i5su2oukNHwIQ.jpg",
-                    contentDescription = null,
-                    modifier = Modifier
-                        .width(120.dp)
-                        .height(180.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    contentScale = ContentScale.Crop
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(start = 16.dp, bottom = 8.dp)
-                ) {
-                    Text(
-                        text = "Jawan",
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "2023 • 7.2 • Action • 2h 49m",
-                        color = KinoColors.Muted,
-                        fontSize = 14.sp
-                    )
-                }
-            }
-
-            // Actions
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .offset(y = (-40).dp)
-            ) {
-                Button(
-                    onClick = { navController.navigate(Screen.Player.createRoute(type, id)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Red),
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Icon(Icons.Default.PlayArrow, contentDescription = null)
-                    Spacer(Modifier.width(8.dp))
-                    Text("Watch Now", fontWeight = FontWeight.Bold)
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    DetailActionItem(Icons.Default.Add, "Watchlist")
-                    DetailActionItem(Icons.Default.Download, "Download")
-                    DetailActionItem(Icons.Default.Share, "Share")
-                }
-
+            
+            Column(modifier = Modifier.padding(horizontal = 20.dp)) {
                 Text(
-                    text = "A high-octane action thriller which outlines the emotional journey of a man who is set to rectify the wrongs in the society.",
-                    color = KinoColors.Text,
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp
+                    text = "Oppenheimer",
+                    color = Color.White,
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
                 )
-
+                
+                Spacer(modifier = Modifier.height(10.dp))
+                
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Star, contentDescription = null, color = Color.Yellow, size = 18.dp)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("8.9 (1.2M Reviews)", color = Color.Gray, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text("2023", color = Color.Gray, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text("3h 1m", color = Color.Gray, fontSize = 14.sp)
+                }
+                
+                Spacer(modifier = Modifier.height(20.dp))
+                
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = { /* TODO */ },
+                        modifier = Modifier.weight(1f).height(56.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Primary),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Icon(Icons.Default.PlayArrow, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Watch Now", fontWeight = FontWeight.Bold)
+                    }
+                    
+                    Spacer(modifier = Modifier.width(12.dp))
+                    
+                    FilledTonalIconButton(
+                        onClick = { /* TODO */ },
+                        modifier = Modifier.size(56.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = KinoColors.Surface
+                        )
+                    ) {
+                        Text("+", color = Color.White, fontSize = 24.sp)
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(30.dp))
+                
+                Text(
+                    text = "Storyline",
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                
+                Spacer(modifier = Modifier.height(10.dp))
+                
+                Text(
+                    text = "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb. A psychological thriller that follows the life of the man who changed the world forever.",
+                    color = Color.Gray,
+                    fontSize = 16.sp,
+                    lineHeight = 24.sp
+                )
+                
+                Spacer(modifier = Modifier.height(30.dp))
+                
                 Text(
                     text = "Cast",
                     color = Color.White,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
-
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    items(5) {
+                
+                Spacer(modifier = Modifier.height(15.dp))
+                
+                Row(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+                    repeat(4) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            AsyncImage(
-                                model = "https://image.tmdb.org/t/p/w185/7mS70G9N6z4q7r7Z5Z7Z5Z7Z5Z7.jpg",
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(70.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop
-                            )
-                            Text(
-                                text = "Actor Name",
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                modifier = Modifier.padding(top = 4.dp)
-                            )
+                            Box(modifier = Modifier.size(70.dp).clip(CircleShape).background(KinoColors.Surface))
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("Actor Name", color = Color.White, fontSize = 12.sp)
                         }
                     }
                 }
+                
+                Spacer(modifier = Modifier.height(100.dp))
             }
         }
-
+        
         // Back Button
         IconButton(
             onClick = { navController.popBackStack() },
             modifier = Modifier
-                .padding(16.dp)
-                .background(Color.Black.copy(alpha = 0.5f), CircleShape)
+                .padding(20.dp)
+                .statusBarsPadding()
+                .clip(CircleShape)
+                .background(Color.Black.copy(alpha = 0.5f))
         ) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
+            Icon(Icons.Default.ArrowBack, contentDescription = "Back", color = Color.White)
         }
     }
 }
 
 @Composable
-fun DetailActionItem(icon: androidx.compose.ui.graphics.vector.ImageVector, label: String) {
+fun DetailActionItem(icon: Any, label: String) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(24.dp))
-        Text(text = label, color = KinoColors.Muted, fontSize = 12.sp, modifier = Modifier.padding(top = 4.dp))
+        // Implementation
     }
 }

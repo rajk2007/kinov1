@@ -1,19 +1,20 @@
 package com.rajk2007.kino.ui.screens
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,9 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.rajk2007.kino.data.network.TmdbApi
-import com.rajk2007.kino.data.network.TmdbMedia
-import com.rajk2007.kino.ui.navigation.Screen
 import com.rajk2007.kino.ui.theme.KinoColors
 import kotlinx.coroutines.delay
 
@@ -35,15 +33,7 @@ import kotlinx.coroutines.delay
 fun HomeScreen(navController: NavController) {
     var selectedCategory by remember { mutableStateOf("Trending") }
     
-    // Crash protection
-    try {
-        HomeScreenContent(navController, selectedCategory) { selectedCategory = it }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Something went wrong", color = Color.White)
-        }
-    }
+    HomeScreenContent(navController, selectedCategory) { selectedCategory = it }
 }
 
 @Composable
@@ -52,154 +42,149 @@ fun HomeScreenContent(
     selectedCategory: String,
     onCategorySelected: (String) -> Unit
 ) {
-    val categories = listOf("Trending", "Movies", "Series", "Anime", "Hindi", "English", "Tamil", "Telugu", "Korean", "Japanese")
-
+    val scrollState = rememberScrollState()
+    
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(KinoColors.Black)
+            .background(KinoColors.Background)
+            .verticalScroll(scrollState)
+            .padding(bottom = 80.dp)
     ) {
         // Top Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(20.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = "KINO",
-                color = Color.White,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
+            Column {
+                Text(
+                    text = "Hello, Raj",
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "What do you want to watch today?",
+                    color = Color.Gray,
+                    fontSize = 14.sp
+                )
+            }
+            
             Row {
-                IconButton(
-                    onClick = { navController.navigate(Screen.Search.route) },
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .background(KinoColors.Elevated, CircleShape)
-                ) {
-                    Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
+                IconButton(onClick = { /* TODO */ }) {
+                    Icon(Icons.Default.Search, contentDescription = "Search", color = Color.White)
                 }
-                IconButton(
-                    onClick = { },
-                    modifier = Modifier.background(KinoColors.Elevated, CircleShape)
-                ) {
-                    Icon(Icons.Default.Notifications, contentDescription = "Notifications", tint = Color.White)
+                IconButton(onClick = { /* TODO */ }) {
+                    Icon(Icons.Default.Notifications, contentDescription = "Notifications", color = Color.White)
                 }
             }
         }
 
         // Category Pills
+        val categories = listOf("Trending", "Movies", "TV Shows", "Anime", "My List")
         LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             items(categories) { category ->
-                val isSelected = selectedCategory == category
                 Surface(
-                    onClick = { onCategorySelected(category) },
-                    shape = RoundedCornerShape(20.dp),
-                    color = if (isSelected) KinoColors.Red else KinoColors.Elevated,
-                    modifier = Modifier.height(36.dp)
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(20.dp))
+                        .clickable { onCategorySelected(category) },
+                    color = if (selectedCategory == category) KinoColors.Primary else KinoColors.Surface,
+                    shape = RoundedCornerShape(20.dp)
                 ) {
-                    Box(modifier = Modifier.padding(horizontal = 16.dp), contentAlignment = Alignment.Center) {
-                        Text(text = category, color = Color.White, fontSize = 14.sp)
-                    }
+                    Text(
+                        text = category,
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
+                        fontSize = 14.sp,
+                        fontWeight = if (selectedCategory == category) FontWeight.Bold else FontWeight.Normal
+                    )
                 }
             }
         }
 
-        // Content
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            item { HeroSection(navController) }
-            
-            if (selectedCategory == "Trending") {
-                item { ContinueWatchingSection(navController) }
-                item { ContentRow(navController, "Trending Now") }
-                item { ContentRow(navController, "Trending Movies") }
-                item { ContentRow(navController, "Trending TV") }
-            } else {
-                item { ContentRow(navController, "$selectedCategory Popular") }
-                item { ContentRow(navController, "$selectedCategory Top Rated") }
-            }
-        }
+        HeroSection()
+        
+        ContinueWatchingSection()
+        
+        ContentRow(title = "Trending Now", navController = navController)
+        ContentRow(title = "Popular on Kino", navController = navController)
+        ContentRow(title = "New Releases", navController = navController)
     }
 }
 
 @Composable
-fun HeroSection(navController: NavController) {
-    // Placeholder Hero Content
+fun HeroSection() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(450.dp)
+            .height(400.dp)
+            .padding(20.dp)
+            .clip(RoundedCornerShape(24.dp))
     ) {
         AsyncImage(
-            model = "https://image.tmdb.org/t/p/w1280/rvMmQj3nMZbJmoW6QrzU0nq9Xky.jpg",
-            contentDescription = null,
+            model = "https://image.tmdb.org/t/p/original/r2J0VvYm0sX7h7uR3v9Z8v4X5V0.jpg",
+            contentDescription = "Hero Image",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )
+        
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, KinoColors.Black),
+                        colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f)),
                         startY = 300f
                     )
                 )
         )
+        
         Column(
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(16.dp)
+                .padding(20.dp)
         ) {
-            Surface(
-                color = KinoColors.Red,
-                shape = RoundedCornerShape(4.dp),
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                Text(
-                    text = "SERIES",
-                    color = Color.White,
-                    fontSize = 10.sp,
-                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                )
-            }
             Text(
-                text = "Cape Fear",
+                text = "Oppenheimer",
                 color = Color.White,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "2026 • 5.3 • Drama • Crime",
-                color = KinoColors.Muted,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(vertical = 4.dp)
+                text = "2023 • Drama/History • 3h 1m",
+                color = Color.LightGray,
+                fontSize = 14.sp
             )
-            Row(modifier = Modifier.padding(top = 12.dp)) {
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Button(
-                    onClick = { navController.navigate(Screen.Player.createRoute("tv", 277439)) },
-                    colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Red),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.weight(1f).height(48.dp)
+                    onClick = { /* TODO */ },
+                    colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Primary),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
+                    Icon(Icons.Default.PlayArrow, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text("Watch Now")
                 }
-                Spacer(Modifier.width(8.dp))
-                Button(
-                    onClick = { },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.2f)),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.weight(1f).height(48.dp)
+                
+                Spacer(modifier = Modifier.width(12.dp))
+                
+                FilledTonalIconButton(
+                    onClick = { /* TODO */ },
+                    shape = RoundedCornerShape(12.dp),
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = Color.White.copy(alpha = 0.2f)
+                    )
                 ) {
-                    Text("Watchlist", color = Color.White)
+                    Text("+", color = Color.White, fontSize = 24.sp)
                 }
             }
         }
@@ -207,37 +192,50 @@ fun HeroSection(navController: NavController) {
 }
 
 @Composable
-fun ContinueWatchingSection(navController: NavController) {
-    Column(modifier = Modifier.padding(top = 24.dp)) {
+fun ContinueWatchingSection() {
+    Column(modifier = Modifier.padding(vertical = 10.dp)) {
         Text(
             text = "Continue Watching",
             color = Color.White,
-            fontSize = 18.sp,
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
         )
+        
         LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            contentPadding = PaddingValues(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            val items = listOf(
-                Triple("Jawan", 0.65f, "https://image.tmdb.org/t/p/w500/aTovumsNlDjof7YVoU5nW2RHaYn.jpg"),
-                Triple("One Piece", 0.30f, "https://image.tmdb.org/t/p/w500/wPN9TvXjMu3JZpf9ZuJEW80Bsbu.jpg"),
-                Triple("The Boys", 0.80f, "https://image.tmdb.org/t/p/w500/mGVrXeIjyecj6TKmwPVpHlscEmw.jpg")
-            )
-            items(items) { (title, progress, img) ->
-                Column(modifier = Modifier.width(160.dp)) {
-                    Box(modifier = Modifier.height(100.dp).clip(RoundedCornerShape(8.dp))) {
-                        AsyncImage(model = img, contentDescription = null, contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-                        LinearProgressIndicator(
-                            progress = { progress },
-                            modifier = Modifier.fillMaxWidth().height(4.dp).align(Alignment.BottomCenter),
-                            color = KinoColors.Red,
-                            trackColor = Color.DarkGray
+            items(3) {
+                Box(
+                    modifier = Modifier
+                        .width(280.dp)
+                        .height(160.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(KinoColors.Surface)
+                ) {
+                    AsyncImage(
+                        model = "https://image.tmdb.org/t/p/w500/5i6SjbC970BTnZSTUv3B8fjPXvF.jpg",
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                    
+                    // Progress Bar
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(4.dp)
+                            .background(Color.Gray.copy(alpha = 0.5f))
+                            .align(Alignment.BottomStart)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.6f)
+                                .fillMaxHeight()
+                                .background(KinoColors.Primary)
                         )
                     }
-                    Text(text = title, color = Color.White, fontSize = 14.sp, modifier = Modifier.padding(top = 4.dp))
-                    Text(text = "Resume", color = KinoColors.Muted, fontSize = 12.sp)
                 }
             }
         }
@@ -245,20 +243,33 @@ fun ContinueWatchingSection(navController: NavController) {
 }
 
 @Composable
-fun ContentRow(navController: NavController, title: String) {
-    Column(modifier = Modifier.padding(top = 24.dp)) {
-        Text(
-            text = title,
-            color = Color.White,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        )
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+fun ContentRow(title: String, navController: NavController) {
+    Column(modifier = Modifier.padding(vertical = 10.dp)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            items(8) {
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = "See All",
+                color = KinoColors.Primary,
+                fontSize = 14.sp
+            )
+        }
+        
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(15.dp)
+        ) {
+            items(5) { index ->
                 MediaCard(navController)
             }
         }
@@ -267,46 +278,50 @@ fun ContentRow(navController: NavController, title: String) {
 
 @Composable
 fun MediaCard(navController: NavController) {
-    Box(
+    Column(
         modifier = Modifier
-            .width(120.dp)
-            .height(180.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(KinoColors.Card)
-            .clickable { navController.navigate(Screen.Details.createRoute("movie", 1083381)) }
+            .width(140.dp)
+            .clickable { navController.navigate("details/movie/1") }
     ) {
-        AsyncImage(
-            model = "https://image.tmdb.org/t/p/w342/rhGx6E3qRNMgj3i5su2oukNHwIQ.jpg",
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(KinoColors.Surface)
+        ) {
+            AsyncImage(
+                model = "https://image.tmdb.org/t/p/w500/8Gxv0mYmUpepXUhwlm8YvE4Sxv1.jpg",
+                contentDescription = null,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            
+            Surface(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .align(Alignment.TopEnd),
+                color = Color.Black.copy(alpha = 0.6f),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Text(
+                    text = "8.5",
+                    color = Color.Yellow,
+                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = "The Dark Knight",
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1
         )
-        // Rating Badge
-        Surface(
-            color = KinoColors.Gold,
-            shape = RoundedCornerShape(bottomStart = 8.dp),
-            modifier = Modifier.align(Alignment.TopEnd)
-        ) {
-            Text(
-                text = "6.8",
-                color = Color.Black,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-            )
-        }
-        // HD Badge
-        Surface(
-            color = Color.Black.copy(alpha = 0.5f),
-            shape = RoundedCornerShape(bottomEnd = 8.dp),
-            modifier = Modifier.align(Alignment.TopStart)
-        ) {
-            Text(
-                text = "HD",
-                color = Color.White,
-                fontSize = 10.sp,
-                modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-            )
-        }
     }
 }
