@@ -61,30 +61,20 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     
-    // Correct JitPack dependency for CloudStream library
+    // CloudStream core library - JitPack library module
     implementation("com.github.recloudstream:cloudstream:library:master-SNAPSHOT")
 
     // JSON parsing
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     
-    // CloudStream plugin loading
-    implementation("com.github.Blatzar:NiceHttp:0.4.11")
-    implementation("org.jsoup:jsoup:1.17.2")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
-
-    // Video playback with ExoPlayer/Media3
+    // Media3 ExoPlayer
     implementation("androidx.media3:media3-exoplayer:1.3.1")
     implementation("androidx.media3:media3-exoplayer-hls:1.3.1")
     implementation("androidx.media3:media3-exoplayer-dash:1.3.1")
     implementation("androidx.media3:media3-ui:1.3.1")
-    implementation("androidx.media3:media3-datasource-okhttp:1.3.1")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
-
-    // DataStore for preferences
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     implementation("androidx.core:core-ktx:1.13.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
