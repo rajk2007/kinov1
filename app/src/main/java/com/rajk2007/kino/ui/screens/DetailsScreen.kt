@@ -162,7 +162,7 @@ fun DetailsScreenContent(navController: NavController, type: String, id: Int) {
                 .clip(CircleShape)
                 .background(Color.Black.copy(alpha = 0.5f))
         ) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Back", color = Color.White)
+            Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
         }
     }
 }
