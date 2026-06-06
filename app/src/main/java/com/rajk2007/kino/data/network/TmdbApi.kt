@@ -7,67 +7,62 @@ import retrofit2.http.Query
 
 interface TmdbApi {
     @GET("trending/all/week")
-    suspend fun getTrendingAll(@Query("api_key") apiKey: String = API_KEY): TmdbResponse
+    suspend fun getTrendingAll(): TmdbResponse
 
     @GET("trending/movie/week")
-    suspend fun getTrendingMovies(@Query("api_key") apiKey: String = API_KEY): TmdbResponse
+    suspend fun getTrendingMovies(): TmdbResponse
 
     @GET("trending/tv/week")
-    suspend fun getTrendingTv(@Query("api_key") apiKey: String = API_KEY): TmdbResponse
+    suspend fun getTrendingTv(): TmdbResponse
 
     @GET("movie/popular")
-    suspend fun getPopularMovies(@Query("api_key") apiKey: String = API_KEY): TmdbResponse
+    suspend fun getPopularMovies(): TmdbResponse
 
     @GET("movie/top_rated")
-    suspend fun getTopRatedMovies(@Query("api_key") apiKey: String = API_KEY): TmdbResponse
+    suspend fun getTopRatedMovies(): TmdbResponse
 
     @GET("movie/now_playing")
-    suspend fun getNowPlayingMovies(@Query("api_key") apiKey: String = API_KEY): TmdbResponse
+    suspend fun getNowPlayingMovies(): TmdbResponse
 
     @GET("movie/upcoming")
-    suspend fun getUpcomingMovies(@Query("api_key") apiKey: String = API_KEY): TmdbResponse
+    suspend fun getUpcomingMovies(): TmdbResponse
 
     @GET("tv/popular")
-    suspend fun getPopularTv(@Query("api_key") apiKey: String = API_KEY): TmdbResponse
+    suspend fun getPopularTv(): TmdbResponse
 
     @GET("tv/top_rated")
-    suspend fun getTopRatedTv(@Query("api_key") apiKey: String = API_KEY): TmdbResponse
+    suspend fun getTopRatedTv(): TmdbResponse
 
     @GET("tv/airing_today")
-    suspend fun getAiringTodayTv(@Query("api_key") apiKey: String = API_KEY): TmdbResponse
+    suspend fun getAiringTodayTv(): TmdbResponse
 
     @GET("discover/movie")
     suspend fun discoverMovies(
         @Query("with_genres") genres: String? = null,
-        @Query("with_original_language") language: String? = null,
-        @Query("api_key") apiKey: String = API_KEY
+        @Query("with_original_language") language: String? = null
     ): TmdbResponse
 
     @GET("discover/tv")
     suspend fun discoverTv(
         @Query("with_genres") genres: String? = null,
-        @Query("with_original_language") language: String? = null,
-        @Query("api_key") apiKey: String = API_KEY
+        @Query("with_original_language") language: String? = null
     ): TmdbResponse
 
     @GET("search/multi")
     suspend fun searchMulti(
-        @Query("query") query: String,
-        @Query("api_key") apiKey: String = API_KEY
+        @Query("query") query: String
     ): TmdbResponse
 
     @GET("movie/{id}")
     suspend fun getMovieDetails(
         @Path("id") id: Int,
-        @Query("append_to_response") append: String = "credits,similar,videos",
-        @Query("api_key") apiKey: String = API_KEY
+        @Query("append_to_response") append: String = "credits,similar,videos"
     ): MovieDetailResponse
 
     @GET("tv/{id}")
     suspend fun getTvDetails(
         @Path("id") id: Int,
-        @Query("append_to_response") append: String = "credits,similar,videos,seasons",
-        @Query("api_key") apiKey: String = API_KEY
+        @Query("append_to_response") append: String = "credits,similar,videos,seasons"
     ): TvDetailResponse
 
     companion object {

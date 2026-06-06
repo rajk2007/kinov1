@@ -3,7 +3,6 @@ package com.rajk2007.kino.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -21,26 +20,63 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.rajk2007.kino.data.network.TmdbClient
+import com.rajk2007.kino.data.network.TmdbMedia
 import com.rajk2007.kino.ui.theme.KinoColors
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(navController: NavController) {
     var selectedCategory by remember { mutableStateOf("Trending") }
+    val scope = rememberCoroutineScope()
     
-    HomeScreenContent(navController, selectedCategory) { selectedCategory = it }
+    var trendingMovies by remember { mutableStateOf<List<TmdbMedia>>(emptyList()) }
+    var popularMovies by remember { mutableStateOf<List<TmdbMedia>>(emptyList()) }
+    var topRatedMovies by remember { mutableStateOf<List<TmdbMedia>>(emptyList()) }
+    var heroMovie by remember { mutableStateOf<TmdbMedia?>(null) }
+
+    LaunchedEffect(Unit) {
+        scope.launch {
+            try {
+                val trending = TmdbClient.api.getTrendingAll().results
+                trendingMovies = trending
+                heroMovie = trending.firstOrNull()
+                popularMovies = TmdbClient.api.getPopularMovies().results
+                topRatedMovies = TmdbClient.api.getTopRatedMovies().results
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+    
+    HomeScreenContent(
+        navController = navController,
+        selectedCategory = selectedCategory,
+        onCategorySelected = { selectedCategory = it },
+        trendingMovies = trendingMovies,
+        popularMovies = popularMovies,
+        topRatedMovies = topRatedMovies,
+        heroMovie = heroMovie
+    )
 }
 
 @Composable
 fun HomeScreenContent(
     navController: NavController,
     selectedCategory: String,
-    onCategorySelected: (String) -> Unit
+    onCategorySelected: (String) -> Unit,
+    trendingMovies: List<TmdbMedia>,
+    popularMovies: List<TmdbMedia>,
+    topRatedMovies: List<TmdbMedia>,
+    heroMovie: TmdbMedia?
 ) {
     val scrollState = rememberScrollState()
     
@@ -74,7 +110,7 @@ fun HomeScreenContent(
             }
             
             Row {
-                IconButton(onClick = { /* TODO */ }) {
+                IconButton(onClick = { navController.navigate("search") }) {
                     Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
                 }
                 IconButton(onClick = { /* TODO */ }) {
@@ -108,27 +144,33 @@ fun HomeScreenContent(
             }
         }
 
-        HeroSection()
+        heroMovie?.let { HeroSection(it, navController) }
         
         ContinueWatchingSection()
         
-        ContentRow(title = "Trending Now", navController = navController)
-        ContentRow(title = "Popular on Kino", navController = navController)
-        ContentRow(title = "New Releases", navController = navController)
+        ContentRow(title = "Trending Now", items = trendingMovies, navController = navController)
+        ContentRow(title = "Popular on Kino", items = popularMovies, navController = navController)
+        ContentRow(title = "Top Rated", items = topRatedMovies, navController = navController)
     }
 }
 
 @Composable
-fun HeroSection() {
+fun HeroSection(item: TmdbMedia, navController: NavController) {
+    val backdropUrl = "https://image.tmdb.org/t/p/w1280${item.backdropPath}"
+    
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(400.dp)
             .padding(20.dp)
             .clip(RoundedCornerShape(24.dp))
+            .clickable { navController.navigate("details/${item.mediaType ?: "movie"}/${item.id}") }
     ) {
         AsyncImage(
-            model = "https://image.tmdb.org/t/p/original/r2J0VvYm0sX7h7uR3v9Z8v4X5V0.jpg",
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(backdropUrl)
+                .crossfade(true)
+                .build(),
             contentDescription = "Hero Image",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -151,13 +193,13 @@ fun HeroSection() {
                 .padding(20.dp)
         ) {
             Text(
-                text = "Oppenheimer",
+                text = item.title ?: item.name ?: "",
                 color = Color.White,
-                fontSize = 32.sp,
+                fontSize = 28.sp,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "2023 • Drama/History • 3h 1m",
+                text = "${item.releaseDate ?: item.firstAirDate ?: ""} • Rating: ${item.voteAverage}",
                 color = Color.LightGray,
                 fontSize = 14.sp
             )
@@ -166,7 +208,7 @@ fun HeroSection() {
             
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Button(
-                    onClick = { /* TODO */ },
+                    onClick = { navController.navigate("player/${item.mediaType ?: "movie"}/${item.id}") },
                     colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Red),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -206,44 +248,23 @@ fun ContinueWatchingSection() {
             contentPadding = PaddingValues(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            items(3) {
+            items(0) { // Placeholder for now
                 Box(
                     modifier = Modifier
                         .width(280.dp)
                         .height(160.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .background(KinoColors.Surface)
-                ) {
-                    AsyncImage(
-                        model = "https://image.tmdb.org/t/p/w500/5i6SjbC970BTnZSTUv3B8fjPXvF.jpg",
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                    
-                    // Progress Bar
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp)
-                            .background(Color.Gray.copy(alpha = 0.5f))
-                            .align(Alignment.BottomStart)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth(0.6f)
-                                .fillMaxHeight()
-                                .background(KinoColors.Red)
-                        )
-                    }
-                }
+                )
             }
         }
     }
 }
 
 @Composable
-fun ContentRow(title: String, navController: NavController) {
+fun ContentRow(title: String, items: List<TmdbMedia>, navController: NavController) {
+    if (items.isEmpty()) return
+
     Column(modifier = Modifier.padding(vertical = 10.dp)) {
         Row(
             modifier = Modifier
@@ -269,19 +290,21 @@ fun ContentRow(title: String, navController: NavController) {
             contentPadding = PaddingValues(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(15.dp)
         ) {
-            items(5) { index ->
-                MediaCard(navController)
+            items(items) { item ->
+                MediaCard(item, navController)
             }
         }
     }
 }
 
 @Composable
-fun MediaCard(navController: NavController) {
+fun MediaCard(item: TmdbMedia, navController: NavController) {
+    val posterUrl = "https://image.tmdb.org/t/p/w342${item.posterPath}"
+
     Column(
         modifier = Modifier
             .width(140.dp)
-            .clickable { navController.navigate("details/movie/1") }
+            .clickable { navController.navigate("details/${item.mediaType ?: "movie"}/${item.id}") }
     ) {
         Box(
             modifier = Modifier
@@ -291,8 +314,11 @@ fun MediaCard(navController: NavController) {
                 .background(KinoColors.Surface)
         ) {
             AsyncImage(
-                model = "https://image.tmdb.org/t/p/w500/8Gxv0mYmUpepXUhwlm8YvE4Sxv1.jpg",
-                contentDescription = null,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(posterUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = item.title ?: item.name,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
@@ -305,7 +331,7 @@ fun MediaCard(navController: NavController) {
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
-                    text = "8.5",
+                    text = String.format("%.1f", item.voteAverage),
                     color = Color.Yellow,
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                     fontSize = 12.sp,
@@ -317,7 +343,7 @@ fun MediaCard(navController: NavController) {
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "The Dark Knight",
+            text = item.title ?: item.name ?: "",
             color = Color.White,
             fontSize = 14.sp,
             fontWeight = FontWeight.Medium,

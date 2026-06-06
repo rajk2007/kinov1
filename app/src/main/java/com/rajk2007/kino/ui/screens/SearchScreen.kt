@@ -1,9 +1,5 @@
-@file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
-
 package com.rajk2007.kino.ui.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,23 +15,42 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.rajk2007.kino.data.network.TmdbClient
+import com.rajk2007.kino.data.network.TmdbMedia
 import com.rajk2007.kino.ui.theme.KinoColors
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(navController: NavController) {
-    SearchScreenContent(navController)
-}
-
-@Composable
-fun SearchScreenContent(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
-    val trendingSearches = listOf("Jawan", "One Piece", "Oppenheimer", "Attack on Titan", "RRR", "The Boys")
+    var searchResults by remember { mutableStateOf<List<TmdbMedia>>(emptyList()) }
+    val scope = rememberCoroutineScope()
     
+    LaunchedEffect(searchQuery) {
+        if (searchQuery.length > 2) {
+            delay(500) // Debounce
+            scope.launch {
+                try {
+                    val results = TmdbClient.api.searchMulti(searchQuery).results
+                    searchResults = results
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        } else if (searchQuery.isEmpty()) {
+            searchResults = emptyList()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -63,14 +78,29 @@ fun SearchScreenContent(navController: NavController) {
                 unfocusedBorderColor = KinoColors.Surface,
                 focusedContainerColor = KinoColors.Surface,
                 unfocusedContainerColor = KinoColors.Surface,
-                cursorColor = KinoColors.Red
+                cursorColor = KinoColors.Red,
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White
             ),
             shape = RoundedCornerShape(16.dp),
             singleLine = true
         )
         
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
         
+        if (searchResults.isEmpty() && searchQuery.isEmpty()) {
+            TrendingSearchesSection { searchQuery = it }
+        } else {
+            SearchResultsGrid(searchResults, navController)
+        }
+    }
+}
+
+@Composable
+fun TrendingSearchesSection(onSearchClick: (String) -> Unit) {
+    val trendingSearches = listOf("Jawan", "One Piece", "Oppenheimer", "Attack on Titan", "RRR", "The Boys")
+    
+    Column {
         Text(
             text = "Trending Searches",
             color = Color.White,
@@ -89,7 +119,7 @@ fun SearchScreenContent(navController: NavController) {
                 Surface(
                     color = KinoColors.Surface,
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.clickable { searchQuery = search }
+                    modifier = Modifier.clickable { onSearchClick(search) }
                 ) {
                     Text(
                         text = search,
@@ -100,55 +130,63 @@ fun SearchScreenContent(navController: NavController) {
                 }
             }
         }
-        
-        Spacer(modifier = Modifier.height(30.dp))
-        
-        Text(
-            text = "Categories",
-            color = Color.White,
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
-        
-        Spacer(modifier = Modifier.height(15.dp))
-        
-        val categories = listOf(
-            "Action" to Color(0xFFFF5252),
-            "Comedy" to Color(0xFFFFD740),
-            "Drama" to Color(0xFF448AFF),
-            "Horror" to Color(0xFF7C4DFF),
-            "Sci-Fi" to Color(0xFF64FFDA),
-            "Anime" to Color(0xFFFF4081)
-        )
-        
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(15.dp),
-            verticalArrangement = Arrangement.spacedBy(15.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(categories) { (name, color) ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(90.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(color.copy(alpha = 0.2f))
-                        .clickable { /* TODO */ },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = name,
-                        color = color,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
+    }
+}
+
+@Composable
+fun SearchResultsGrid(results: List<TmdbMedia>, navController: NavController) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(results) { item ->
+            SearchMediaCard(item, navController)
         }
     }
 }
 
+@Composable
+fun SearchMediaCard(item: TmdbMedia, navController: NavController) {
+    val posterUrl = "https://image.tmdb.org/t/p/w342${item.posterPath}"
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { navController.navigate("details/${item.mediaType ?: "movie"}/${item.id}") }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(KinoColors.Surface)
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(posterUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = item.title ?: item.name,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = item.title ?: item.name ?: "",
+            color = Color.White,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Medium,
+            maxLines = 1
+        )
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun FlowRow(
     modifier: Modifier = Modifier,
