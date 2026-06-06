@@ -83,12 +83,21 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.Splash.route) {
+                            val context = androidx.compose.ui.platform.LocalContext.current
                             SplashScreen(onTimeout = {
-                                navController.navigate(Screen.Home.route) {
-                                    popUpTo(Screen.Splash.route) { inclusive = true }
+                                val isInstalled = com.rajk2007.kino.plugin.PluginManager.isInstalled(context)
+                                if (isInstalled) {
+                                    navController.navigate(Screen.Home.route) {
+                                        popUpTo(Screen.Splash.route) { inclusive = true }
+                                    }
+                                } else {
+                                    navController.navigate("installer") {
+                                        popUpTo(Screen.Splash.route) { inclusive = true }
+                                    }
                                 }
                             })
                         }
+                        composable("installer") { InstallerScreen(navController) }
                         composable(Screen.Home.route) { HomeScreen(navController) }
                         composable(Screen.Search.route) { SearchScreen(navController) }
                         composable(Screen.Library.route) { LibraryScreen(navController) }
