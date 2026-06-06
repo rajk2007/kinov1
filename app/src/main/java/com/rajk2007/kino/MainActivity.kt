@@ -13,17 +13,28 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
+import com.rajk2007.kino.cloudstream.KinoPluginManager
 import com.rajk2007.kino.ui.navigation.Screen
 import com.rajk2007.kino.ui.screens.*
 import com.rajk2007.kino.ui.theme.KinoColors
 import com.rajk2007.kino.ui.theme.KinoTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        lifecycleScope.launch {
+            if (KinoPluginManager.isInitialized(applicationContext)) {
+                KinoPluginManager.loadInstalledPlugins(applicationContext)
+            }
+        }
+
         setContent {
             KinoTheme {
                 val navController = rememberNavController()
@@ -83,9 +94,9 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.Splash.route) {
-                            val context = androidx.compose.ui.platform.LocalContext.current
+                            val context = LocalContext.current
                             SplashScreen(onTimeout = {
-                                val isInstalled = com.rajk2007.kino.plugin.PluginManager.isInstalled(context)
+                                val isInstalled = KinoPluginManager.isInitialized(context)
                                 if (isInstalled) {
                                     navController.navigate(Screen.Home.route) {
                                         popUpTo(Screen.Splash.route) { inclusive = true }
@@ -110,7 +121,8 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Player.route) { backStackEntry ->
                             val type = backStackEntry.arguments?.getString("type") ?: "movie"
                             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
-                            PlayerScreen(navController, type, id.toString())
+                            val title = backStackEntry.arguments?.getString("title") ?: ""
+                            PlayerScreen(navController, type, id.toString(), title)
                         }
                     }
                 }
