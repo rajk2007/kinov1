@@ -2,9 +2,9 @@ package com.rajk2007.kino.cloudstream
 
 import android.content.Context
 import android.util.Log
-import dalvik.system.PathClassLoader
-import com.lagradost.cloudstream3.plugins.Plugin
 import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.plugins.Plugin
+import dalvik.system.PathClassLoader
 import java.io.File
 
 class PluginLoader(private val context: Context) {
@@ -16,11 +16,9 @@ class PluginLoader(private val context: Context) {
             pluginFile.setReadOnly()
             val classLoader = PathClassLoader(pluginFile.absolutePath, context.classLoader)
 
-            // Load Plugin wrapper (standard in CloudStream plugins)
             val pluginClass = classLoader.loadClass("com.lagradost.cloudstream3.plugins.Plugin")
             val pluginInstance = pluginClass.getDeclaredConstructor().newInstance() as Plugin
 
-            // Call init if exists
             try {
                 val initMethod = pluginClass.getMethod("init", Context::class.java)
                 initMethod.invoke(pluginInstance, context)
