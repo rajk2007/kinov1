@@ -20,16 +20,14 @@ class PluginLoader(private val context: Context) {
                 context.classLoader
             )
 
-            // Try loading manifest to find main class
             try {
                 val manifestStream = classLoader.getResourceAsStream("manifest.json")
                 if (manifestStream != null) {
                     val manifest = manifestStream.bufferedReader().readText()
-                    Log.d(TAG, "Plugin manifest: $manifest")
+                    Log.d(TAG, "Plugin manifest: ")
                 }
             } catch (e: Exception) { }
 
-            // Try common CloudStream plugin entry points
             val entryPoints = listOf(
                 "com.lagradost.cloudstream3.plugins.Plugin",
                 "com.lagradost.cloudstream3.MainAPI"
@@ -45,13 +43,11 @@ class PluginLoader(private val context: Context) {
                         clazz.getDeclaredConstructor().newInstance()
                     }
                     
-                    // Try to call load() if it exists
                     try {
                         val loadMethod = clazz.getMethod("load", Context::class.java)
                         loadMethod.invoke(instance, context)
                     } catch (e: Exception) { }
 
-                    // Get providers from plugin
                     try {
                         val providersMethod = clazz.getMethod("getProviders")
                         val result = providersMethod.invoke(instance)
@@ -60,10 +56,9 @@ class PluginLoader(private val context: Context) {
                         }
                     } catch (e: Exception) { }
 
-                    // If instance itself is a provider add it
                     providers.add(instance)
                     break
-                } catch (e: ClassNotFoundException) { 
+                } catch (e: ClassNotFoundException) {
                     continue
                 } catch (e: Exception) {
                     Log.e(TAG, "Error loading $entry", e)
