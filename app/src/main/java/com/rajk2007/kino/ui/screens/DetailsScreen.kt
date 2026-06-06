@@ -117,7 +117,7 @@ fun DetailsScreen(navController: NavController, type: String, id: Int) {
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
                     onClick = {
-                        navController.navigate("player/$type/$id")
+                        navController.navigate("player/$type/${id.toString()}")
                     },
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Red),

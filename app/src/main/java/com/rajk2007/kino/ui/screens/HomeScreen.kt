@@ -164,7 +164,7 @@ fun HeroSection(item: TmdbMedia, navController: NavController) {
             .height(400.dp)
             .padding(20.dp)
             .clip(RoundedCornerShape(24.dp))
-            .clickable { navController.navigate("details/${item.mediaType ?: "movie"}/${item.id}") }
+            .clickable { navController.navigate("details/${item.mediaType ?: "movie"}/${item.id.toString()}") }
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -208,7 +208,7 @@ fun HeroSection(item: TmdbMedia, navController: NavController) {
             
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Button(
-                    onClick = { navController.navigate("player/${item.mediaType ?: "movie"}/${item.id}") },
+                    onClick = { navController.navigate("player/${item.mediaType ?: "movie"}/${item.id.toString()}") },
                     colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Red),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -304,7 +304,7 @@ fun MediaCard(item: TmdbMedia, navController: NavController) {
     Column(
         modifier = Modifier
             .width(140.dp)
-            .clickable { navController.navigate("details/${item.mediaType ?: "movie"}/${item.id}") }
+            .clickable { navController.navigate("details/${item.mediaType ?: "movie"}/${item.id.toString()}") }
     ) {
         Box(
             modifier = Modifier

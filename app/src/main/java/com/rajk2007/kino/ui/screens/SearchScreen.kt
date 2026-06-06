@@ -154,7 +154,7 @@ fun SearchMediaCard(item: TmdbMedia, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navController.navigate("details/${item.mediaType ?: "movie"}/${item.id}") }
+            .clickable { navController.navigate("details/${item.mediaType ?: "movie"}/${item.id.toString()}") }
     ) {
         Box(
             modifier = Modifier
