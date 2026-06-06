@@ -25,7 +25,7 @@ class StreamEngine {
 
                 val data = when (loadResponse) {
                     is MovieLoadResponse -> loadResponse.dataUrl
-                    is TvSeriesLoadResponse -> loadResponse.episodes.firstOrNull()?.data ?: ""
+                    is TvSeriesLoadResponse -> loadResponse.episodes.firstOrNull()?.data ?: first.url
                     else -> first.url
                 }
 
@@ -38,16 +38,13 @@ class StreamEngine {
                 )
                 allLinks.addAll(links)
             } catch (e: Exception) {
-                Log.e(TAG, "Error with provider ${provider.name}", e)
+                Log.e(TAG, "Provider ${provider.name} error", e)
             }
         }
 
-        // Hindi/Dub priority
         allLinks.sortedWith(
-            compareByDescending<ExtractorLink> { 
-                it.name.contains("Hindi", ignoreCase = true) || 
-                it.name.contains("Dub", ignoreCase = true) 
-            }.thenByDescending { it.quality }
+            compareByDescending<ExtractorLink> { CloudStreamUtils.isHindi(it) }
+                .thenByDescending { it.quality }
         )
     }
 }
