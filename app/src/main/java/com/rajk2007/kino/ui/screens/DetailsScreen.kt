@@ -25,6 +25,18 @@ import com.rajk2007.kino.ui.theme.KinoColors
 
 @Composable
 fun DetailsScreen(navController: NavController, type: String, id: Int) {
+    try {
+        DetailsScreenContent(navController, type, id)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Error loading details", color = Color.White)
+        }
+    }
+}
+
+@Composable
+fun DetailsScreenContent(navController: NavController, type: String, id: Int) {
     val scrollState = rememberScrollState()
 
     Box(

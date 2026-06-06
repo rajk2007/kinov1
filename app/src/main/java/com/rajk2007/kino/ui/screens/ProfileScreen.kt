@@ -24,6 +24,18 @@ import com.rajk2007.kino.ui.theme.KinoColors
 
 @Composable
 fun ProfileScreen(navController: NavController) {
+    try {
+        ProfileScreenContent(navController)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Error in profile", color = Color.White)
+        }
+    }
+}
+
+@Composable
+fun ProfileScreenContent(navController: NavController) {
     val scrollState = rememberScrollState()
 
     Column(

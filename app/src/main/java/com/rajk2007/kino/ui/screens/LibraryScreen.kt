@@ -21,6 +21,18 @@ import com.rajk2007.kino.ui.theme.KinoColors
 
 @Composable
 fun LibraryScreen(navController: NavController) {
+    try {
+        LibraryScreenContent(navController)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Error in library", color = Color.White)
+        }
+    }
+}
+
+@Composable
+fun LibraryScreenContent(navController: NavController) {
     var selectedTab by remember { mutableIntStateOf(0) }
     val tabs = listOf("Downloads", "Continue", "Watchlist", "Favorites", "History", "Completed")
 

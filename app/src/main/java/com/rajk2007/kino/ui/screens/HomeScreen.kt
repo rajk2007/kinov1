@@ -10,6 +10,10 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +34,24 @@ import kotlinx.coroutines.delay
 @Composable
 fun HomeScreen(navController: NavController) {
     var selectedCategory by remember { mutableStateOf("Trending") }
+    
+    // Crash protection
+    try {
+        HomeScreenContent(navController, selectedCategory) { selectedCategory = it }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Something went wrong", color = Color.White)
+        }
+    }
+}
+
+@Composable
+fun HomeScreenContent(
+    navController: NavController,
+    selectedCategory: String,
+    onCategorySelected: (String) -> Unit
+) {
     val categories = listOf("Trending", "Movies", "Series", "Anime", "Hindi", "English", "Tamil", "Telugu", "Korean", "Japanese")
 
     Column(
@@ -79,7 +101,7 @@ fun HomeScreen(navController: NavController) {
             items(categories) { category ->
                 val isSelected = selectedCategory == category
                 Surface(
-                    onClick = { selectedCategory = category },
+                    onClick = { onCategorySelected(category) },
                     shape = RoundedCornerShape(20.dp),
                     color = if (isSelected) KinoColors.Red else KinoColors.Elevated,
                     modifier = Modifier.height(36.dp)

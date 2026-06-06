@@ -19,6 +19,18 @@ import com.rajk2007.kino.ui.theme.KinoColors
 
 @Composable
 fun SearchScreen(navController: NavController) {
+    try {
+        SearchScreenContent(navController)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text("Error in search", color = Color.White)
+        }
+    }
+}
+
+@Composable
+fun SearchScreenContent(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
     val trendingSearches = listOf("Jawan", "One Piece", "Oppenheimer", "Attack on Titan", "RRR", "The Boys")
     val categories = listOf("Action", "Romance", "Anime", "Thriller", "Comedy", "Sci-Fi")
