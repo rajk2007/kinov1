@@ -116,7 +116,9 @@ fun DetailsScreen(navController: NavController, type: String, id: Int) {
                 Text(text = genres, color = KinoColors.Red, fontSize = 14.sp, fontWeight = FontWeight.Medium)
                 Spacer(modifier = Modifier.height(24.dp))
                 Button(
-                    onClick = { navController.navigate("player/$type/$id") },
+                    onClick = {
+                        navController.navigate("player/$type/$id")
+                    },
                     modifier = Modifier.fillMaxWidth().height(56.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = KinoColors.Red),
                     shape = RoundedCornerShape(12.dp)
