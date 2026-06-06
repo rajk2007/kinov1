@@ -30,11 +30,30 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/versions/**"
+            pickFirsts += "META-INF/kotlinx-serialization-core.kotlin_module"
+            pickFirsts += "META-INF/kotlinx-serialization-json.kotlin_module"
+            pickFirsts += "META-INF/library.kotlin_module"
+            pickFirsts += "META-INF/okhttp.kotlin_module"
+            pickFirsts += "META-INF/okio.kotlin_module"
+            pickFirsts += "META-INF/kotlinx-coroutines-core.kotlin_module"
+            pickFirsts += "META-INF/kotlinx-coroutines-android.kotlin_module"
+            pickFirsts += "META-INF/kotlin-stdlib.kotlin_module"
+            pickFirsts += "META-INF/kotlin-stdlib-jdk7.kotlin_module"
+            pickFirsts += "META-INF/kotlin-stdlib-jdk8.kotlin_module"
+        }
+    }
 }
 
 dependencies {
     // CloudStream
-    implementation("com.github.recloudstream:cloudstream:master-SNAPSHOT")
+    implementation("com.github.recloudstream.cloudstream:library-android:4.6.2") {
+        exclude(group = "com.github.recloudstream.cloudstream", module = "library-jvm")
+    }
 
     // Networking
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
