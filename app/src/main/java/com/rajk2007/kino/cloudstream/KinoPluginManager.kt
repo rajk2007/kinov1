@@ -2,6 +2,8 @@ package com.rajk2007.kino.cloudstream
 
 import android.content.Context
 import android.util.Log
+import com.lagradost.cloudstream3.MainAPI
+import com.lagradost.cloudstream3.ExtractorLink
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -42,7 +44,7 @@ object KinoPluginManager {
     private lateinit var loader: PluginLoader
     private val repoParser = RepoParser()
     private val streamEngine = StreamEngine()
-    private var loadedProviders = listOf<Any>()
+    private var loadedProviders = listOf<MainAPI>()
 
     fun initialize(context: Context) {
         if (!::downloader.isInitialized) {
@@ -115,13 +117,11 @@ object KinoPluginManager {
     suspend fun getStreams(
         title: String,
         tmdbId: Int,
-        type: String,
-        season: Int? = null,
-        episode: Int? = null
+        type: String
     ): List<ExtractorLink> {
         if (loadedProviders.isEmpty()) return emptyList()
         return streamEngine.getStreamsForContent(
-            loadedProviders, title, tmdbId, type, season, episode
+            loadedProviders, title, tmdbId, type
         )
     }
 
