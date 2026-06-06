@@ -1,6 +1,6 @@
-package com.rajk2007.kino.ui.screens
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 
-@file:OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+package com.rajk2007.kino.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,7 +31,6 @@ fun SearchScreen(navController: NavController) {
     SearchScreenContent(navController)
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun SearchScreenContent(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }
