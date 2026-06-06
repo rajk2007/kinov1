@@ -61,8 +61,8 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     
-    // CloudStream core library
-    implementation("com.github.recloudstream:cloudstream:4.6.2")
+    // Correct JitPack dependency for CloudStream library
+    implementation("com.github.recloudstream:cloudstream:library:master-SNAPSHOT")
 
     // JSON parsing
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
