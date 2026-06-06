@@ -117,11 +117,13 @@ object KinoPluginManager {
     suspend fun getStreams(
         title: String,
         tmdbId: Int,
-        type: String
+        type: String,
+        season: Int? = null,
+        episode: Int? = null
     ): List<ExtractorLink> {
         if (loadedProviders.isEmpty()) return emptyList()
         return streamEngine.getStreamsForContent(
-            loadedProviders, title, tmdbId, type
+            loadedProviders, title, tmdbId, type, season, episode
         )
     }
 
