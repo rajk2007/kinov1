@@ -73,7 +73,7 @@ fun DetailsScreenContent(navController: NavController, type: String, id: Int) {
                 Spacer(modifier = Modifier.height(10.dp))
                 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Star, contentDescription = null, color = Color.Yellow, size = 18.dp)
+                    Icon(Icons.Default.Star, contentDescription = null, tint = Color.Yellow, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(4.dp))
                     Text("8.9 (1.2M Reviews)", color = Color.Gray, fontSize = 14.sp)
                     Spacer(modifier = Modifier.width(16.dp))

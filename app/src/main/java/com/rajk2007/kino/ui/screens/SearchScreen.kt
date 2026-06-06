@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import com.rajk2007.kino.ui.theme.KinoColors
 
@@ -27,7 +28,7 @@ fun SearchScreen(navController: NavController) {
     SearchScreenContent(navController)
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun SearchScreenContent(navController: NavController) {
     var searchQuery by remember { mutableStateOf("") }

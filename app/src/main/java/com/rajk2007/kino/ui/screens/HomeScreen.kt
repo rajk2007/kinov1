@@ -75,10 +75,10 @@ fun HomeScreenContent(
             
             Row {
                 IconButton(onClick = { /* TODO */ }) {
-                    Icon(Icons.Default.Search, contentDescription = "Search", color = Color.White)
+                    Icon(Icons.Default.Search, contentDescription = "Search", tint = Color.White)
                 }
                 IconButton(onClick = { /* TODO */ }) {
-                    Icon(Icons.Default.Notifications, contentDescription = "Notifications", color = Color.White)
+                    Icon(Icons.Default.Notifications, contentDescription = "Notifications", tint = Color.White)
                 }
             }
         }
