@@ -27,6 +27,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
+import com.lagradost.cloudstream3.ExtractorLink
 import com.rajk2007.kino.cloudstream.KinoPluginManager
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -70,11 +71,12 @@ fun PlayerScreen(
                     type = type
                 )
                 if (streams.isNotEmpty()) {
-                    streamUrl = streams.first().url
-                    useExoPlayer = streams.first().isM3u8 ||
-                        streams.first().url.contains(".m3u8") ||
-                        streams.first().url.contains(".mp4")
-                    statusText = "Playing via ${streams.first().name}"
+                    val best = streams.first()
+                    streamUrl = best.url
+                    useExoPlayer = best.isM3u8 || 
+                        best.url.contains(".m3u8", ignoreCase = true) || 
+                        best.url.contains(".mp4", ignoreCase = true)
+                    statusText = "Playing via ${best.name}"
                     isLoading = false
                     return@LaunchedEffect
                 }
