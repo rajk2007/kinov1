@@ -51,9 +51,7 @@ android {
 
 dependencies {
     // CloudStream
-    implementation("com.github.recloudstream:cloudstream:v4.6.2") {
-        exclude(group = "com.github.recloudstream.cloudstream", module = "library-jvm")
-    }
+    implementation("com.github.LagradOst:CloudStream-3:v3.3.19")
 
     // Networking
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
