@@ -54,7 +54,7 @@ android {
 
 dependencies {
     // CloudStream
-    implementation("com.github.LagradOst:CloudStream-3:v3.3.19")
+    implementation("com.github.recloudstream:cloudstream:master-SNAPSHOT")
     // Networking
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
