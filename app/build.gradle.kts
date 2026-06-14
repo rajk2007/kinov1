@@ -54,7 +54,7 @@ android {
 
 dependencies {
     // CloudStream
-    implementation("com.github.recloudstream:cloudstream:2c03a3d976")
+    implementation(project(":cloudstream:app"))
     // Networking
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
