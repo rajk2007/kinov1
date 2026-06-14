@@ -34,6 +34,9 @@ android {
     packagingOptions {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/*.kotlin_module"
             excludes += "META-INF/versions/**"
             pickFirsts += "META-INF/kotlinx-serialization-core.kotlin_module"
             pickFirsts += "META-INF/kotlinx-serialization-json.kotlin_module"
@@ -50,6 +53,8 @@ android {
 }
 
 dependencies {
+    // CloudStream
+    implementation("com.github.LagradOst:CloudStream-3:v3.3.19")
     // Networking
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
