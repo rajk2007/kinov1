@@ -1,14 +1,3 @@
-dependencyResolutionManagement {
-    versionCatalogs {
-        create("libs") {
-            from(files("cloudstream/gradle/libs.versions.toml"))
-        }
-        create("csLibs") {
-            from(files("cloudstream/gradle/libs.versions.toml"))
-        }
-    }
-}
-
 pluginManagement {
     repositories {
         google()
@@ -27,4 +16,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Kino"
 include(":app")
-include(":cloudstream:app")
