@@ -1,3 +1,0 @@
-[submodule "cloudstream"]
-	path = cloudstream
-	url = https://github.com/recloudstream/cloudstream.git
