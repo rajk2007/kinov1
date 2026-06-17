@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application") version "8.3.2"
-    id("org.jetbrains.kotlin.android") version "2.1.0"
+    id("org.jetbrains.kotlin.android") version "2.0.21"
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
@@ -72,7 +72,7 @@ dependencies {
     
     // CloudStream plugin loading
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    implementation("com.github.recloudstream:cloudstream:v4.7.0") {
+    implementation("com.github.recloudstream:cloudstream:v4.3.0") {
         exclude(group = "com.github.recloudstream.cloudstream", module = "library-jvm")
     }
     implementation("com.github.Blatzar:NiceHttp:0.4.11")
