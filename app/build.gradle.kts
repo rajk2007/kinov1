@@ -1,10 +1,20 @@
 plugins {
     id("com.android.application") version "8.3.2"
-    id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.android") version "2.1.0"
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
+    packaging {
+        resources {
+            excludes += setOf(
+                "META-INF/INDEX.LIST",
+                "META-INF/DEPENDENCIES",
+                "META-INF/*.kotlin_module",
+                "META-INF/versions/**"
+            )
+        }
+    }
     namespace = "com.rajk2007.kino"
     compileSdk = 34
 
@@ -62,7 +72,9 @@ dependencies {
     
     // CloudStream plugin loading
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    implementation("com.github.recloudstream:cloudstream:v4.7.0")
+    implementation("com.github.recloudstream:cloudstream:v4.7.0") {
+        exclude(group = "com.github.recloudstream.cloudstream", module = "library-jvm")
+    }
     implementation("com.github.Blatzar:NiceHttp:0.4.11")
     implementation("org.jsoup:jsoup:1.17.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
