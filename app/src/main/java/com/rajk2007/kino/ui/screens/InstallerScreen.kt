@@ -15,30 +15,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.rajk2007.kino.plugin.PluginManager
+import com.kinov1.plugins.DefaultRepoInstaller
 import kotlinx.coroutines.launch
 
 @Composable
 fun InstallerScreen(navController: NavController) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val repoInstaller = remember { DefaultRepoInstaller(context) }
     
-    var currentRepo by remember { mutableStateOf("") }
-    var repoProgress by remember { mutableStateOf(mapOf<String, Float>()) }
-    var repoDone by remember { mutableStateOf(mapOf<String, Boolean>()) }
     var allDone by remember { mutableStateOf(false) }
     var installing by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        scope.launch {
-            PluginManager.installDefaultRepos(context) { repoName, progress, done ->
-                currentRepo = repoName
-                repoProgress = repoProgress + (repoName to progress)
-                repoDone = repoDone + (repoName to done)
-                if (done && repoDone.size == PluginManager.DEFAULT_REPOS.size 
-                    && repoDone.values.all { it }) {
-                    allDone = true
-                }
+        if (!installing) {
+            installing = true
+            scope.launch {
+                repoInstaller.installDefaults()
+                allDone = true
             }
         }
     }
@@ -67,52 +61,15 @@ fun InstallerScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.height(48.dp))
 
-            PluginManager.DEFAULT_REPOS.forEach { repo ->
-                val progress = repoProgress[repo.name] ?: 0f
-                val done = repoDone[repo.name] ?: false
-                
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column {
-                            Text(
-                                text = repo.name,
-                                color = Color.White,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Text(
-                                text = repo.shortCode,
-                                color = Color(0xFF8A8A8A),
-                                fontSize = 11.sp
-                            )
-                        }
-                        if (done) {
-                            Text("✓", color = Color(0xFF00BFA5), fontSize = 18.sp)
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(6.dp))
-                    LinearProgressIndicator(
-                        progress = { progress },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp)),
-                        color = Color(0xFFE50914),
-                        trackColor = Color(0xFF1A1A1A)
-                    )
-                }
-            }
-
-            if (allDone) {
-                Spacer(modifier = Modifier.height(32.dp))
+            if (!allDone) {
+                CircularProgressIndicator(color = Color(0xFFE50914))
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Installing default plugins...",
+                    color = Color.White,
+                    fontSize = 14.sp
+                )
+            } else {
                 Text(
                     text = "✓ All sources ready. Welcome to Kino.",
                     color = Color(0xFF00BFA5),

@@ -1,6 +1,7 @@
 package com.rajk2007.kino.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -98,6 +99,16 @@ fun ProfileScreenContent(navController: NavController) {
         }
 
         Column(modifier = Modifier.padding(20.dp)) {
+            ProfileSectionTitle("Plugin Management")
+            ProfileSettingRow(
+                Icons.Default.Extension, 
+                "Manage Plugins", 
+                "Installed",
+                onClick = { navController.navigate("plugin_management") }
+            )
+            
+            Spacer(modifier = Modifier.height(30.dp))
+            
             ProfileSectionTitle("Playback Settings")
             ProfileSettingRow(Icons.Default.Settings, "Video Quality", "Auto (4K)")
             ProfileSettingRow(Icons.Default.Info, "Subtitles", "English")
@@ -156,10 +167,16 @@ fun ProfileSectionTitle(title: String) {
 }
 
 @Composable
-fun ProfileSettingRow(icon: ImageVector, title: String, value: String) {
+fun ProfileSettingRow(
+    icon: ImageVector, 
+    title: String, 
+    value: String,
+    onClick: (() -> Unit)? = null
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(enabled = onClick != null) { onClick?.invoke() }
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween

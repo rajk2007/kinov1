@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.VideoLibrary
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -20,10 +21,32 @@ import com.rajk2007.kino.ui.navigation.Screen
 import com.rajk2007.kino.ui.screens.*
 import com.rajk2007.kino.ui.theme.KinoColors
 import com.rajk2007.kino.ui.theme.KinoTheme
+import com.kinov1.plugins.KinoPluginManager
+import com.kinov1.plugins.DefaultRepoInstaller
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+    
+    private lateinit var pluginManager: KinoPluginManager
+    private lateinit var repoInstaller: DefaultRepoInstaller
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        pluginManager = KinoPluginManager(this)
+        repoInstaller = DefaultRepoInstaller(this)
+        
+        // Initialize plugins
+        pluginManager.initialize()
+        
+        // Auto-install defaults if not present
+        if (!repoInstaller.areDefaultsInstalled()) {
+            MainScope().launch {
+                repoInstaller.installDefaults()
+            }
+        }
+        
         setContent {
             KinoTheme {
                 val navController = rememberNavController()
@@ -83,10 +106,8 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.Splash.route) {
-                            val context = androidx.compose.ui.platform.LocalContext.current
                             SplashScreen(onTimeout = {
-                                val isInstalled = com.rajk2007.kino.plugin.PluginManager.isInstalled(context)
-                                if (isInstalled) {
+                                if (repoInstaller.areDefaultsInstalled()) {
                                     navController.navigate(Screen.Home.route) {
                                         popUpTo(Screen.Splash.route) { inclusive = true }
                                     }
@@ -102,6 +123,12 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.Search.route) { SearchScreen(navController) }
                         composable(Screen.Library.route) { LibraryScreen(navController) }
                         composable(Screen.Profile.route) { ProfileScreen(navController) }
+                        composable("plugin_management") {
+                            PluginManagementScreen(
+                                pluginManager = pluginManager,
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
                         composable(Screen.Details.route) { backStackEntry ->
                             val type = backStackEntry.arguments?.getString("type") ?: "movie"
                             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
