@@ -74,9 +74,7 @@ dependencies {
     
     // CloudStream plugin loading
         implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    implementation("com.github.recloudstream:cloudstream:v4.7.0") {
-        exclude(group = "com.github.recloudstream.cloudstream", module = "library-jvm")
-    }
+    implementation("com.github.recloudstream:cloudstream:library:v4.7.0")
     implementation("com.github.Blatzar:NiceHttp:0.4.11")
     implementation("org.jsoup:jsoup:1.17.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.17.0")
